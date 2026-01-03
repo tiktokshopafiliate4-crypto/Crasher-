@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Core v9.1.4 - AUDIO EDITION</title>
+    <style>
+        /* [SEMUA CSS SEBELUMNYA TETAP SAMA] */
+        /* Untuk hemat space, CSS tetap seperti sebelumnya */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        body { background: #000; color: #0f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: hidden; background: linear-gradient(-45deg, #000, #111, #000, #222); background-size: 400% 400%; animation: gradientBG 10s ease infinite; }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .container { width: 95%; max-width: 800px; padding: 30px; border: 3px solid; border-image: linear-gradient(45deg, #ff0000, #00ff00, #0000ff) 1; border-radius: 20px; background: rgba(0, 0, 0, 0.85); box-shadow: 0 0 50px rgba(0, 255, 0, 0.5); text-align: center; position: relative; z-index: 10; }
+        h1 { font-size: 2.8em; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 5px; background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); -webkit-background-clip: text; background-clip: text; color: transparent; animation: rgbText 3s linear infinite; }
+        @keyframes rgbText { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        .login-form input { width: 80%; padding: 15px; margin: 15px 0; background: #111; border: 2px solid #0f0; border-radius: 10px; color: #0f0; font-size: 1.2em; text-align: center; transition: all 0.3s; }
+        .login-form input:focus { border-color: #00ffff; box-shadow: 0 0 20px #00ffff; outline: none; }
+        .login-form button { padding: 15px 40px; background: linear-gradient(90deg, #ff0000, #0000ff); color: white; border: none; border-radius: 10px; font-size: 1.3em; font-weight: bold; cursor: pointer; margin-top: 20px; transition: transform 0.3s; }
+        .login-form button:hover { transform: scale(1.05); background: linear-gradient(90deg, #0000ff, #ff0000); }
+        .warning-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 60%; background: #000; border: 8px solid; border-image: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00) 1; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; animation: rgbBorder 0.5s linear infinite; }
+        @keyframes rgbBorder { 0% { border-image-source: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00); } 25% { border-image-source: linear-gradient(45deg, #ffff00, #ff0000, #00ff00, #0000ff); } 50% { border-image-source: linear-gradient(45deg, #0000ff, #ffff00, #ff0000, #00ff00); } 75% { border-image-source: linear-gradient(45deg, #00ff00, #0000ff, #ffff00, #ff0000); } 100% { border-image-source: linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00); } }
+        .warning-text { font-size: 2.5em; color: #fff; text-align: center; padding: 30px; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; animation: glitch 0.3s infinite; }
+        @keyframes glitch { 0% { transform: translate(0); } 20% { transform: translate(-3px, 3px); } 40% { transform: translate(-3px, -3px); } 60% { transform: translate(3px, 3px); } 80% { transform: translate(3px, -3px); } 100% { transform: translate(0); } }
+        .countdown { font-size: 10em; color: #ff0000; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 1001; text-shadow: 0 0 30px #ff0000; animation: pulse 0.5s infinite; }
+        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.2); } 100% { transform: translate(-50%, -50%) scale(1); } }
+        .explosion { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 1002; display: none; }
+        .explosion-particle { position: absolute; width: 20px; height: 20px; background: #ff0000; border-radius: 50%; animation: explode 1s forwards; }
+        @keyframes explode { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(30); opacity: 0; } }
+        .success-animation { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; display: none; z-index: 1003; }
+        .chain-x { position: absolute; width: 100%; height: 100%; stroke: #0f0; stroke-width: 5; fill: none; animation: spinChain 3s linear infinite; }
+        .lock { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; fill: #00ffff; animation: bounceLock 2s infinite; }
+        @keyframes spinChain { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes bounceLock { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1); } }
+        .core-ball { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: radial-gradient(circle, #ff0000, #ffff00); border-radius: 50%; display: none; animation: pulseCore 1s infinite; }
+        @keyframes pulseCore { 0% { box-shadow: 0 0 20px #ff0000; } 50% { box-shadow: 0 0 50px #ffff00; } 100% { box-shadow: 0 0 20px #ff0000; } }
+        .control-panel { display: none; width: 100%; margin-top: 40px; text-align: left; }
+        .control-panel h2 { font-size: 2em; margin-bottom: 20px; color: #00ffff; border-bottom: 2px solid #00ffff; padding-bottom: 10px; }
+        .target-input { width: 100%; padding: 15px; margin: 15px 0; background: #111; border: 2px solid #00ff00; border-radius: 10px; color: #0f0; font-size: 1.2em; }
+        .attack-select { width: 100%; padding: 15px; margin: 15px 0; background: #111; border: 2px solid #ff0000; border-radius: 10px; color: #fff; font-size: 1.2em; }
+        .option-details { background: rgba(255, 0, 0, 0.1); padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #ff0000; display: none; }
+        .execute-btn { padding: 20px; width: 100%; background: linear-gradient(90deg, #ff0000, #0000ff); color: white; border: none; border-radius: 10px; font-size: 1.5em; font-weight: bold; cursor: pointer; margin-top: 30px; transition: all 0.3s; }
+        .execute-btn:hover { background: linear-gradient(90deg, #0000ff, #ff0000); box-shadow: 0 0 30px #ff0000; }
+        .rgb-particle { position: absolute; width: 10px; height: 10px; border-radius: 50%; pointer-events: none; z-index: 1; }
+        
+        /* Audio Controls Hidden */
+        .audio-controls { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Partikel RGB Latar -->
+    <div id="particles"></div>
+
+    <!-- Container Utama -->
+    <div class="container">
+        <h1>🔐 SYSTEM CORE v9.1.4 - AUDIO EDITION</h1>
+
+        <!-- Form Login -->
+        <div class="login-form" id="loginForm">
+            <input type="text" id="username" placeholder="USERNAME" autocomplete="off">
+            <input type="password" id="password" placeholder="PASSWORD" autocomplete="off">
+            <button onclick="checkLogin()">[ ACCESS CORE ]</button>
+        </div>
+
+        <!-- Panel Kontrol Target -->
+        <div class="control-panel" id="controlPanel">
+            <h2>☠️ TARGET EXECUTION PANEL</h2>
+            <input type="text" class="target-input" id="targetNumber" placeholder="+62 8xx-xxxx-xxxx" autocomplete="off">
+            
+            <select class="attack-select" id="attackType" onchange="showOptionDetails()">
+                <option value="">-- Pilih Serangan --</option>
+                <option value="bug_wa">1. BUG WA - Membuat WA Target Crash</option>
+                <option value="spam_call">2. SPAM VIDEO CALL</option>
+                <option value="spam_report">3. SPAM REPORT</option>
+                <option value="spam_chat">4. SPAM CHAT</option>
+                <option value="slow_device">5. SLOW DEVICE (Overload RAM)</option>
+                <option value="battery_drain">6. BATTERY DRAIN (Simulasi)</option>
+                <option value="fake_virus">7. FAKE VIRUS SCARE</option>
+                <option value="data_corrupt">8. DATA CORRUPTION SCARE</option>
+                <option value="social_engineer">9. SOCIAL ENGINEERING BLAST</option>
+                <option value="full_chaos">10. FULL SYSTEM CHAOS</option>
+            </select>
+
+            <div class="option-details" id="optionDetails"></div>
+
+            <button class="execute-btn" onclick="executeAttack()">[ LAUNCH ATTACK ]</button>
+        </div>
+    </div>
+
+    <!-- Peringatan Salah Login -->
+    <div class="warning-box" id="warningBox">
+        <div class="warning-text">
+            SEMUA YANG LU ISI SALAH<br>
+            KELUAR DARI WEB INI DALAM 5 DETIK<br>
+            SEKARANG JUGA ATAU HP LU AKAN GUA KASIH VIRUS😈☠️👾💣🧨
+        </div>
+    </div>
+
+    <!-- Countdown 5 Detik -->
+    <div class="countdown" id="countdown">5</div>
+
+    <!-- Animasi Ledakan -->
+    <div class="explosion" id="explosion"></div>
+
+    <!-- Animasi Login Berhasil -->
+    <div class="success-animation" id="successAnimation">
+        <svg class="chain-x" viewBox="0 0 200 200">
+            <path d="M20,100 Q100,20 180,100 Q100,180 20,100 Z" />
+            <path d="M50,50 L150,150 M150,50 L50,150" />
+        </svg>
+        <svg class="lock" viewBox="0 0 24 24">
+            <path d="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15C10,16.11 10.9,17 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z" />
+        </svg>
+        <div class="core-ball" id="coreBall"></div>
+    </div>
+
+    <!-- AUDIO ELEMENTS (HIDDEN) -->
+    <div class="audio-controls">
+        <!-- Background Ambience -->
+        <audio id="bgAmbience" loop>
+            <source src="https://assets.mixkit.co/music/preview/mixkit-horror-hit-312.mp3" type="audio/mpeg">
+        </audio>
+        
+        <!-- Interaction Sounds -->
+        <audio id="soundClick"><source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg"></audio>
+        <audio id="soundHover"><source src="https://assets.mixkit.co/sfx/preview/mixkit-interface-hover-notification-257.mp3" type="audio/mpeg"></audio>
+        <audio id="soundType"><source src="https://assets.mixkit.co/sfx/preview/mixkit-keyboard-typing-1386.mp3" type="audio/mpeg"></audio>
+        <audio id="soundError"><source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg"></audio>
+        <audio id="soundWarning"><source src="https://assets.mixkit.co/sfx/preview/mixkit-warning-alarm-buzzer-1551.mp3" type="audio/mpeg"></audio>
+        
+        <!-- Countdown Sounds -->
+        <audio id="soundCount"><source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg"></audio>
+        
+        <!-- Explosion & Crash -->
+        <audio id="soundExplosion"><source src="https://assets.mixkit.co/sfx/preview/mixkit-bomb-explosion-2800.mp3" type="audio/mpeg"></audio>
+        <audio id="soundCrash"><source src="https://assets.mixkit.co/sfx/preview/mixket-glass-break-with-huge-reverb-389.mp3" type="audio/mpeg"></audio>
+        <audio id="soundGlitch"><source src="https://assets.mixkit.co/sfx/preview/mixkit-computer-glitch-2338.mp3" type="audio/mpeg"></audio>
+        
+        <!-- Success Animation Sounds -->
+        <audio id="soundChainBreak"><source src="https://assets.mixkit.co/sfx/preview/mixkit-metal-chain-break-263.mp3" type="audio/mpeg"></audio>
+        <audio id="soundLockOpen"><source src="https://assets.mixkit.co/sfx/preview/mixkit-padlock-unlock-285.mp3" type="audio/mpeg"></audio>
+        <audio id="soundCoreEmerge"><source src="https://assets.mixkit.co/sfx/preview/mixkit-magic-sparkles-3020.mp3" type="audio/mpeg"></audio>
+        <audio id="soundCorePower"><source src="https://assets.mixkit.co/sfx/preview/mixkit-energy-power-up-3327.mp3" type="audio/mpeg"></audio>
+        <audio id="soundCoreExplode"><source src="https://assets.mixkit.co/sfx/preview/mixkit-blast-3109.mp3" type="audio/mpeg"></audio>
+        
+        <!-- Attack Sounds -->
+        <audio id="soundLaunch"><source src="https://assets.mixkit.co/sfx/preview/mixkit-rocket-launch-3001.mp3" type="audio/mpeg"></audio>
+        <audio id="soundSuccess"><source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg"></audio>
+        <audio id="soundEvilLaugh"><source src="https://assets.mixkit.co/sfx/preview/mixkit-evil-laugh-543.mp3" type="audio/mpeg"></audio>
+    </div>
+
+    <script>
+        // ========== INITIALIZE AUDIO SYSTEM ==========
+        const audio = {
+            bgAmbience: document.getElementById('bgAmbience'),
+            click: document.getElementById('soundClick'),
+            hover: document.getElementById('soundHover'),
+            type: document.getElementById('soundType'),
+            error: document.getElementById('soundError'),
+            warning: document.getElementById('soundWarning'),
+            count: document.getElementById('soundCount'),
+            explosion: document.getElementById('soundExplosion'),
+            crash: document.getElementById('soundCrash'),
+            glitch: document.getElementById('soundGlitch'),
+            chainBreak: document.getElementById('soundChainBreak'),
+            lockOpen: document.getElementById('soundLockOpen'),
+            coreEmerge: document.getElementById('soundCoreEmerge'),
+            corePower: document.getElementById('soundCorePower'),
+            coreExplode: document.getElementById('soundCoreExplode'),
+            launch: document.getElementById('soundLaunch'),
+            success: document.getElementById('soundSuccess'),
+            evilLaugh: document.getElementById('soundEvilLaugh')
+        };
+
+        // Volume settings
+        Object.values(audio).forEach(a => {
+            if (a) {
+                a.volume = 0.7; // Default volume
+                a.preload = 'auto';
+            }
+        });
+        audio.bgAmbience.volume = 0.3; // Background music lower
+        audio.explosion.volume = 0.9;
+        audio.crash.volume = 1.0;
+
+        // Start background ambience
+        function startAmbience() {
+            audio.bgAmbience.currentTime = 0;
+            audio.bgAmbience.play().catch(e => console.log("Audio background perlu interaksi user dulu"));
+        }
+
+        // Play sound with error handling
+        function playSound(sound, delay = 0) {
+            setTimeout(() => {
+                try {
+                    sound.currentTime = 0;
+                    sound.play().catch(e => console.log(`Audio ${sound.id} gagal:`, e));
+                } catch (e) {
+                    console.log("Audio error:", e);
+                }
+            }, delay);
+        }
+
+        // ========== PARTIKEL RGB BACKGROUND ==========
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('rgb-particle');
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.background = `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
+                particle.style.boxShadow = `0 0 20px rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
+                particle.style.animation = `float ${3 + Math.random()*5}s infinite ease-in-out`;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ========== INTERACTION SOUNDS ==========
+        // Klik tombol/input
+        document.querySelectorAll('button, input, select').forEach(el => {
+            el.addEventListener('click', () => playSound(audio.click));
+            el.addEventListener('mouseenter', () => playSound(audio.hover));
+        });
+
+        // Ketik di input
+        document.querySelectorAll('input[type="text"], input[type="password"], input[type="number"]').forEach(input => {
+            input.addEventListener('input', () => playSound(audio.type));
+        });
+
+        // ========== LOGIN SYSTEM ==========
+        const CORRECT_USER = "GETOUTHERE";
+        const CORRECT_PASS = "000912371";
+
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            playSound(audio.click); // Sound klik login
+
+            if (user === CORRECT_USER && pass === CORRECT_PASS) {
+                // Login sukses
+                document.getElementById('loginForm').style.display = 'none';
+                startSuccessAnimation();
+                startAmbience(); // Start background music setelah interaksi pertama
+            } else {
+                // Login gagal
+                playSound(audio.error);
+                showWarning();
+            }
+        }
+
+        // ========== ANIMASI PERINGATAN SALAH ==========
+        function showWarning() {
+            const warningBox = document.getElementById('warningBox');
+            const countdownEl = document.getElementById('countdown');
+            const explosionEl = document.getElementById('explosion');
+
+            playSound(audio.warning); // Warning siren
+            warningBox.style.display = 'flex';
+
+            // Countdown 5 detik dengan suara
+            let count = 5;
+            countdownEl.style.display = 'block';
+            countdownEl.textContent = count;
+            playSound(audio.count); // Beep pertama
+
+            const countInterval = setInterval(() => {
+                count--;
+                countdownEl.textContent = count;
+                playSound(audio.count); // Beep setiap detik
+                
+                if (count <= 0) {
+                    clearInterval(countInterval);
+                    warningBox.style.display = 'none';
+                    countdownEl.style.display = 'none';
+                    triggerExplosion();
+                }
+            }, 1000);
+        }
+
+        // ========== LEDAKAN & CRASH SIMULATION ==========
+        function triggerExplosion() {
+            const explosionEl = document.getElementById('explosion');
+            explosionEl.style.display = 'block';
+
+            // Sound sequence: Glitch → Explosion → Crash
+            playSound(audio.glitch, 0);
+            playSound(audio.explosion, 200);
+            playSound(audio.crash, 500);
+
+            // Buat partikel ledakan
+            for (let i = 0; i < 150; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('explosion-particle');
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.background = `rgb(${Math.random()*255},0,0)`;
+                explosionEl.appendChild(particle);
+            }
+
+            // Overload browser dengan DOM manipulation
+            function crashSimulation() {
+                const start = Date.now();
+                while (Date.now() - start < 5000) {
+                    const div = document.createElement('div');
+                    div.style.position = 'absolute';
+                    div.style.left = Math.random() * 100 + 'vw';
+                    div.style.top = Math.random() * 100 + 'vh';
+                    div.style.width = '100px';
+                    div.style.height = '100px';
+                    div.style.background = `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
+                    document.body.appendChild(div);
+                }
+                setTimeout(() => {
+                    window.location.href = 'about:blank';
+                }, 3000);
+            }
+
+            setTimeout(crashSimulation, 500);
+        }
+
+        // ========== ANIMASI LOGIN SUKSES ==========
+        function startSuccessAnimation() {
+            const successAnim = document.getElementById('successAnimation');
+            const chainX = successAnim.querySelector('.chain-x');
+            const lock = successAnim.querySelector('.lock');
+            const coreBall = document.getElementById('coreBall');
+
+            successAnim.style.display = 'block';
+
+            // Sound sequence untuk animasi:
+            // 1. Suara rantai berputar (background loop) - kita skip loop untuk sederhana
+            // 2. Rantai hancur
+            setTimeout(() => {
+                chainX.style.animation = 'none';
+                lock.style.animation = 'none';
+                lock.style.fill = '#ff0000';
+                chainX.style.stroke = '#ff0000';
+                chainX.style.strokeWidth = '1';
+                chainX.style.opacity = '0.5';
+                
+                // SUARA RANTAI HANCUR + GEMBOK RETAK
+                playSound(audio.chainBreak); // Metal breaking sound
+                playSound(audio.glitch, 300); // Glitch effect
+            }, 3000);
+
+            // 3. Gembok terbuka, bola inti keluar
+            setTimeout(() => {
+                lock.style.transform = 'translate(-50%, -50%) scale(0)';
+                coreBall.style.display = 'block';
+                
+                // SUARA GEMBOK TERBUKA + INTI KELUAR
+                playSound(audio.lockOpen); // Lock unlocking
+                playSound(audio.coreEmerge, 200); // Magical emergence
+                playSound(audio.corePower, 500); // Power surge
+            }, 4000);
+
+            // 4. Bola inti meledak, muncul panel kontrol
+            setTimeout(() => {
+                coreBall.style.display = 'none';
+                successAnim.style.display = 'none';
+                document.getElementById('controlPanel').style.display = 'block';
+                
+                // SUARA INTI MELEDAK + PANEL MUNCUL
+                playSound(audio.coreExplode); // Big explosion
+                playSound(audio.evilLaugh, 500); // Evil laugh
+            }, 6000);
+        }
+
+        // ========== PANEL KONTROL TARGET ==========
+        function showOptionDetails() {
+            const attackType = document.getElementById('attackType').value;
+            const detailsDiv = document.getElementById('optionDetails');
+            detailsDiv.style.display = 'block';
+
+            let html = '';
+            switch (attackType) {
+                case 'bug_wa':
+                    html = `<h3>🐛 BUG WHATSAPP</h3><p>Mengirim payload khusus yang menyebabkan aplikasi WhatsApp target crash berulang saat dibuka. <strong>Efek: Target tidak bisa membuka WA.</strong></p>`;
+                    break;
+                case 'spam_call':
+                    html = `<h3>📞 SPAM VIDEO CALL</h3>
+                            <input type="number" id="callCount" placeholder="Jumlah Spam (contoh: 50)" min="1" max="1000" style="width:100%; padding:10px; margin-top:10px; background:#222; color:#fff; border:1px solid #ff0000;">
+                            <p><strong>Efek:</strong> Target mendapat panggilan video terus-menerus, notifikasi tidak bisa dimatikan.</p>`;
+                    break;
+                case 'spam_report':
+                    html = `<h3>⚠️ SPAM REPORT</h3>
+                            <input type="number" id="reportCount" placeholder="Jumlah Report (contoh: 100)" min="1" max="500" style="width:100%; padding:10px; margin-top:10px; background:#222; color:#fff; border:1px solid #ff0000;">
+                            <p><strong>Efek:</strong> Akun target direport massal, berisiko terkena banned sementara/permanen.</p>`;
+                    break;
+                case 'spam_chat':
+                    html = `<h3>💬 SPAM CHAT</h3>
+                            <input type="text" id="chatMessage" placeholder="Pesan spam (contoh: LO DIHACK!)" style="width:100%; padding:10px; margin-top:10px; background:#222; color:#fff; border:1px solid #00ff00;">
+                            <input type="number" id="chatCount" placeholder="Jumlah Spam (contoh: 200)" min="1" max="10000" style="width:100%; padding:10px; margin-top:10px; background:#222; color:#fff; border:1px solid #00ff00;">
+                            <p><strong>Efek:</strong> Inbox target penuh dengan pesan yang sama, membuat kesal dan mungkin crash aplikasi.</p>`;
+                    break;
+                case 'slow_device':
+                    html = `<h3>🐌 SLOW DEVICE (RAM Overload)</h3>
+                            <p>Mengirimkan script yang memaksa browser/device target memproses grafis berat secara terus-menerus. <strong>Efek: HP target menjadi sangat lambat, panas, dan mungkin restart.</strong></p>`;
+                    break;
+                case 'battery_drain':
+                    html = `<h3>🔋 BATTERY DRAIN SIMULATION</h3>
+                            <p>Menampilkan animasi dan proses yang membuat seolah-olah baterai target terkuras sangat cepat (psikologis). <strong>Efek: Target panik karena baterai turun drastis.</strong></p>`;
+                    break;
+                case 'fake_virus':
+                    html = `<h3>🦠 FAKE VIRUS SCARE</h3>
+                            <p>Menampilkan pop-up dan notifikasi menyerupai virus scanner yang mendeteksi "1000+ threats found". <strong>Efek: Target mengira HP-nya terkena virus sungguhan.</strong></p>`;
+                    break;
+                case 'data_corrupt':
+                    html = `<h3>💾 DATA CORRUPTION SCARE</h3>
+                            <p>Animasi simulasi penghapusan file dan kerusakan data dengan suara dan efek visual. <strong>Efek: Target takut data pentingnya hilang.</strong></p>`;
+                    break;
+                case 'social_engineer':
+                    html = `<h3>🎭 SOCIAL ENGINEERING BLAST</h3>
+                            <p>Mengirimkan pesan palsu ke kontak target seolah-olah dari target sendiri (meminta uang, menyebar privasi). <strong>Efek: Reputasi sosial target rusak.</strong></p>`;
+                    break;
+                case 'full_chaos':
+                    html = `<h3>🌪️ FULL SYSTEM CHAOS</h3>
+                            <p><strong>KOMBINASI SEMUA SERANGAN DI ATAS</strong> ditambah overload notifikasi, redirect ke situs aneh, dan simulasi blue screen. <strong>Efek: Target merasa dunia digitalnya kiamat.</strong></p>`;
+                    break;
+                default:
+                    html = '<p>Pilih jenis serangan untuk melihat detail.</p>';
+                    detailsDiv.style.display = 'none';
+                    break;
+            }
+            detailsDiv.innerHTML = html;
+        }
+
+        // ========== EKSEKUSI SERANGAN ==========
+        function executeAttack() {
+            const target = document.getElementById('targetNumber').value;
+            const attackType = document.getElementById('attackType').value;
+
+            if (!target || !attackType) {
+                playSound(audio.error);
+                alert("❗ Isi nomor target dan pilih jenis serangan!");
+                return;
+            }
+
+            // Sound launch attack
+            playSound(audio.launch);
+
+            // Simulasi pengiriman perintah
+            const statusEl = document.createElement('div');
+            statusEl.style.background = 'rgba(255,0,0,0.2)';
+            statusEl.style.padding = '20px';
+            statusEl.style.marginTop = '20px';
+            statusEl.style.borderRadius = '10px';
+            statusEl.style.color = '#0f0';
+            statusEl.innerHTML = `<h3>🚀 ATTACK LAUNCHED!</h3>
+                                 <p><strong>Target:</strong> ${target}</p>
+                                 <p><strong>Attack Type:</strong> ${document.getElementById('attackType').options[document.getElementById('attackType').selectedIndex].text}</p>
+                                 <p><strong>Status:</strong> <span id="attackStatus">Mengeksekusi payload...</span></p>`;
+            document.querySelector('.control-panel').appendChild(statusEl);
+
+            // Simulasi proses dengan sound effects
+            let status = 0;
+            const statusInterval = setInterval(() => {
+                status += 25;
+                document.getElementById('attackStatus').textContent = 
+                    `Mengeksekusi payload... ${status}%`;
+
+                // Play glitch sound setiap 25%
+                if (status % 25 === 0) {
+                    playSound(audio.glitch);
+                }
+
+                if (status >= 100) {
+                    clearInterval(statusInterval);
+                    document.getElementById('attackStatus').innerHTML = 
+                        '<span style="color:#00ff00">✅ SUCCESS! Serangan telah dikirim ke sistem target.</span>';
+                    
+                    // Success sound + evil laugh
+                    playSound(audio.success);
+                    playSound(audio.evilLaugh, 1000);
+                }
+            }, 300);
+        }
+
+        // ========== EFEN RGB RANDOM PADA INPUT ==========
+        const inputs = document.querySelectorAll('input, select, button');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.style.borderImage = `linear-gradient(45deg, ${getRandomColor()}, ${getRandomColor()}, ${getRandomColor()}) 1`;
+            });
+        });
+
+        function getRandomColor() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // ========== AUTO-PLAY AUDIO SET FIRST CLICK ==========
+        document.addEventListener('click', function initAudio() {
+            startAmbience();
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+    </script>
+</body>
+</html>
